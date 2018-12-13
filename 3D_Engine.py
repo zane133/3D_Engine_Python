@@ -3,8 +3,8 @@ import sys
 import math
 
 def rotate2d(pos, rad):
-    x,y = pos
-    s,c = math.sin(rad), math.cos(rad)
+    x, y = pos
+    s, c = math.sin(rad), math.cos(rad)
     nx = x*c - y*s
     ny = y*c + x*s
     return nx,ny
@@ -16,24 +16,24 @@ class Cam:
 
     def events(self, event):
         if event.type == pygame.MOUSEMOTION:
-            x,y = event.rel
-            x/=200
-            y/=200
-            self.rot[0]+=y
-            self.rot[1]+=x
+            x, y = event.rel
+            x /= 200
+            y /= 200
+            self.rot[0] += y
+            self.rot[1] += x
 
     def update(self, dt, key):
         s = dt*10
-        if key[pygame.K_q]:self.pos[1]+=s
-        if key[pygame.K_e]:self.pos[1]-=s
+        if key[pygame.K_q]:self.pos[1] += s
+        if key[pygame.K_e]:self.pos[1] -= s
         
         # correct movement
-        x,y = s * math.sin(self.rot[1]), s * math.cos(self.rot[1])
+        x, y = s * math.sin(self.rot[1]), s * math.cos(self.rot[1])
 
-        if key[pygame.K_w]:self.pos[0]+=x;self.pos[2]+=y
-        if key[pygame.K_s]:self.pos[0]-=x;self.pos[2]-=y
-        if key[pygame.K_a]:self.pos[0]-=y;self.pos[2]+=x
-        if key[pygame.K_d]:self.pos[0]+=y;self.pos[2]-=x
+        if key[pygame.K_w]:self.pos[0] += x;self.pos[2] += y
+        if key[pygame.K_s]:self.pos[0] -= x;self.pos[2] -= y
+        if key[pygame.K_a]:self.pos[0] -= y;self.pos[2] += x
+        if key[pygame.K_d]:self.pos[0] += y;self.pos[2] -= x
         # if key[pygame.K_s]:self.pos[2]-=s
         # if key[pygame.K_a]:self.pos[0]-=s
         # if key[pygame.K_d]:self.pos[0]+=s
@@ -43,7 +43,7 @@ w, h = 400, 400
 
 # center points
 cx, cy = w//2, h//2
-screen = pygame.display.set_mode((w,h))
+screen = pygame.display.set_mode((w, h))
 clock = pygame.time.Clock()
 
 verts = (-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)
@@ -74,17 +74,17 @@ while True:
         points = []
         for x,y,z in (verts[edge[0]], verts[edge[1]]):
             
-            x-=cam.pos[0]
-            y-=cam.pos[1]
-            z-=cam.pos[2]
+            x -= cam.pos[0]
+            y -= cam.pos[1]
+            z -= cam.pos[2]
 
-            x, z = rotate2d((x,z), cam.rot[1])
-            y, z = rotate2d((y,z), cam.rot[0])
+            x, z = rotate2d((x, z), cam.rot[1])
+            y, z = rotate2d((y, z), cam.rot[0])
 
             f = 200 / z # 透视除法
-            x,y = x * f, y * f
+            x, y = x * f, y * f
             points += [(cx + int(x), cy + int(y))]
-        pygame.draw.line(screen,(0,0,0), points[0],points[1],1)
+        pygame.draw.line(screen, (0,0,0), points[0], points[1], 1)
         
     pygame.display.flip()
 
