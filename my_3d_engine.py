@@ -27,6 +27,7 @@ def init():
     pygame.mouse.get_rel()
     pygame.mouse.set_visible(0)
     pygame.event.set_grab(1)
+    pygame.font.init()
 
 
 def game_input(dt):
@@ -58,9 +59,9 @@ def game_input(dt):
     if key[pygame.K_d]:
         cam_pos -= cam_right * dt
     if key[pygame.K_q]:
-        cam_pos[1] -= dt*10
+        cam_pos[1] -= dt * 5
     if key[pygame.K_e]:
-        cam_pos[1] += dt*10
+        cam_pos[1] += dt * 5
 
 
 # world coordinate to screen coordinate
@@ -95,6 +96,11 @@ def w2s(world_pos):
 
 
 def update(dt):
+    # draw num
+    for each in VERTICES:
+        font = pygame.font.Font(None, 30)
+        text = font.render(str(VERTICES.index(each)), 1, (255, 255, 255))
+        screen.blit(text, w2s(each))
     for edge in EDGES:
         points = []
         start, end = w2s(VERTICES[edge[0]]), w2s(VERTICES[edge[1]])
