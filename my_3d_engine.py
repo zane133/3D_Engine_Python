@@ -5,6 +5,7 @@ import numpy as np
 
 
 VERTICES = [(-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)]
+EDGES = [(0,1),(1,2),(2,3),(3,0),(4,5),(5,6),(6,7),(7,4),(0,4),(1,5),(2,6),(3,7)]
 
 def init():
     global screen, clock, cam_pos, rx, ry, rz, e, cx, cy
@@ -17,8 +18,8 @@ def init():
     # far and near flat
     # f, n = 1000, 500
 
-    cam_pos = np.array([0, 0, 0])
-    e = np.array([0, 0, 30])
+    cam_pos = np.array([0.0, 0.0, 5.0])
+    e = np.array([0, 0, 200])
     rx = np.array([
         [1,  0,                   0                 ],
         [0,  math.cos(theta[0]),  math.sin(theta[0])],
@@ -39,7 +40,7 @@ def init():
     clock = pygame.time.Clock()
 
 
-def input():
+def game_input(dt):
     key = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -49,22 +50,35 @@ def input():
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+    if key[pygame.K_w]:
+        cam_pos[2] -= dt*10
+    if key[pygame.K_s]:
+        cam_pos[2] += dt*10
+    if key[pygame.K_a]:
+        cam_pos[0] += dt*10
+    if key[pygame.K_d]:
+        cam_pos[0] -= dt*10
 
 
-def update():
-    for each in VERTICES:
-        a = np.array(each)
-        a = np.transpose([a])
-        c = np.transpose([cam_pos])
-        # c = cam_pos
-        d = np.dot(rx * ry * rz, (a - c))
+# world coordinate to screen coordinate
+def w2s(world_pos):
+    a = np.array(world_pos)
+    # a = np.transpose([a])
+    # c = np.transpose([cam_pos])
+    c = cam_pos
+    d = np.dot(rx * ry * rz, (a - c))
 
-        bx = (e[2] / d[2]) * d[0] + e[0]
-        by = (e[2] / d[2]) * d[1] + e[1]
-        x, y = cx + int(bx), cy + int(by)
-        print(bx, by)
-        # print(x, y)
-        pygame.draw.circle(screen, (255, 255, 255), (x, y), 1)
+    bx = (e[2] / d[2]) * d[0] + e[0]
+    by = (e[2] / d[2]) * d[1] + e[1]
+    x, y = cx + int(bx), cy + int(by)
+    return x, y
+
+
+def update(dt):
+    for edge in EDGES:
+        points = []
+        start, end = w2s(VERTICES[edge[0]]), w2s(VERTICES[edge[1]])
+        pygame.draw.line(screen, (255, 255, 255), start, end, 1)
 
 
 if __name__ == "__main__":
@@ -73,8 +87,8 @@ if __name__ == "__main__":
         dt = clock.tick() / 1000
         screen.fill((0, 0, 0))
 
-        input()
+        game_input(dt)
 
-        update()
-        break
+        update(dt)
+
         pygame.display.flip()
