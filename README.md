@@ -8,3 +8,4 @@
 ![img](https://github.com/zane133/3D_Engine_Python/blob/master/screenshot.png)
 1. 画家算法 
 2. 遮挡剔除
+3. 控制 w a s d 上左下右, q e 上升下降, 鼠标控制视角
