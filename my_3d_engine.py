@@ -96,15 +96,35 @@ def w2s(world_pos):
 
 
 def update(dt):
-    # draw num
-    for each in VERTICES:
-        font = pygame.font.Font(None, 30)
-        text = font.render(str(VERTICES.index(each)), 1, (255, 255, 255))
-        screen.blit(text, w2s(each))
+    global cam_pos
+
+    # # draw num
+    # for each in VERTICES:
+    #     font = pygame.font.Font(None, 30)
+    #     text = font.render(str(VERTICES.index(each)), 1, (255, 255, 255))
+    #     screen.blit(text, w2s(each))
+
+    # screen_points = []
+    # for edge in EDGES:
+    #     start, end = w2s(VERTICES[edge[0]]), w2s(VERTICES[edge[1]])
+    #     screen_points.append((start, end))
+    #     # pygame.draw.line(screen, (255, 255, 255), start, end, 1)
+
+    # sort edge
+    unsort_edges = []
     for edge in EDGES:
-        points = []
+        edge_norm = np.linalg.norm(VERTICES[edge[0]] - cam_pos, 1) + \
+                    np.linalg.norm(VERTICES[edge[1]] - cam_pos, 1)
         start, end = w2s(VERTICES[edge[0]]), w2s(VERTICES[edge[1]])
-        pygame.draw.line(screen, (255, 255, 255), start, end, 1)
+        unsort_edges.append((start, end, edge_norm))
+    sorted_edges = sorted(unsort_edges, key=lambda i: i[2], reverse=1)
+
+    # print(sort_edges)
+    for edge in sorted_edges:
+        r = sorted_edges.index(edge) * 20
+        g = (len(sorted_edges) - sorted_edges.index(edge)) * 20
+        b = 255
+        pygame.draw.line(screen, (r, g, b), edge[0], edge[1], 5)
 
 
 if __name__ == "__main__":
@@ -116,5 +136,5 @@ if __name__ == "__main__":
         game_input(dt)
 
         update(dt)
-
+        # break
         pygame.display.flip()
